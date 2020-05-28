@@ -1,22 +1,23 @@
 package com.example.project;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 
-public class tab_fragment1 extends Fragment {
+public class tabfragment1 extends Fragment {
     private static ArrayList<item> itemArrayList;
 
-    public tab_fragment1(){
+    public tabfragment1(){
 
     }
 
@@ -35,7 +36,7 @@ public class tab_fragment1 extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.tab_fragment1, container, false);
+        View view = inflater.inflate(R.layout.activity_tabfragment1, container, false);
 
         RecyclerView mRecyclerView = (RecyclerView)view.findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
