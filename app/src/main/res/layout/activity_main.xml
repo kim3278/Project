@@ -17,15 +17,34 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
+    </androidx.viewpager.widget.ViewPager>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_alignParentBottom="true"/>
+        android:layout_weight="0"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="bottom"
+            android:layout_weight="2" />
+
+        <Button
+            android:id="@+id/pill_detect"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00ff0000"
+            android:text="Pill Detect" />
+    </LinearLayout>
 
 
 </LinearLayout>
