@@ -2,7 +2,6 @@ package com.example.project;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,10 +13,10 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-public class tabfragment1 extends Fragment {
-    private static ArrayList<item> itemArrayList;
+public class TabFragment1 extends Fragment {
+    private static ArrayList<Item> itemArrayList;
 
-    public tabfragment1(){
+    public TabFragment1(){
 
     }
 
@@ -27,10 +26,10 @@ public class tabfragment1 extends Fragment {
 
         itemArrayList = new ArrayList<>();
 
-        itemArrayList.add(new item("약1", "email1", "m1"));
-        itemArrayList.add(new item("약2", "email2", "m2"));
-        itemArrayList.add(new item("약3", "email1", "m3"));
-        itemArrayList.add(new item("약4", "email1", "m4"));
+        itemArrayList.add(new Item("약1", "email1", "m1"));
+        itemArrayList.add(new Item("약2", "email2", "m2"));
+        itemArrayList.add(new Item("약3", "email1", "m3"));
+        itemArrayList.add(new Item("약4", "email1", "m4"));
     }
 
     @Nullable

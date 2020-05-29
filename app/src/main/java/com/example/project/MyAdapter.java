@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-    private ArrayList<item> mDataset;
+    private ArrayList<Item> mDataset;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         public TextView mName;
@@ -27,7 +27,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         }
     }
 
-    public MyAdapter(ArrayList<item> myDataset){
+    public MyAdapter(ArrayList<Item> myDataset){
         mDataset = myDataset;
     }
 

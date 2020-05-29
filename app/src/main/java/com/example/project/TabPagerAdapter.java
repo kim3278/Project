@@ -19,13 +19,13 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch(position){
             case 0:
-                tabfragment1 tabFragment1 = new tabfragment1();
+                TabFragment1 tabFragment1 = new TabFragment1();
                 return tabFragment1;
             case 1:
-                tabfragment2 tabFragment2 = new tabfragment2();
+                TabFragment2 tabFragment2 = new TabFragment2();
                 return tabFragment2;
             case 2:
-                tabfragment3 tabFragment3 = new tabfragment3();
+                TabFragment3 tabFragment3 = new TabFragment3();
                 return tabFragment3;
             default:
                 return null;

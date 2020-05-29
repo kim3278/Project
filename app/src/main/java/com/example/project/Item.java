@@ -1,11 +1,11 @@
 package com.example.project;
 
-public class item {
+public class Item {
     String mText1;
     String mText2;
     String mText3;
 
-    public item(String name, String time, String memo){
+    public Item(String name, String time, String memo){
         mText1 = name;
         mText2 = time;
         mText3 = memo;
