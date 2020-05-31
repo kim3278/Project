@@ -32,10 +32,12 @@ import com.pedro.library.AutoPermissions;
 import com.pedro.library.AutoPermissionsListener;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 
@@ -89,6 +91,7 @@ public class CameraTake extends AppCompatActivity implements AutoPermissionsList
         AutoPermissions.Companion.loadAllPermissions(this, 101);
     }
 
+
     public void printClientLog(final String data){
         Log.d("ResultActivity", data);
 
@@ -130,16 +133,13 @@ public class CameraTake extends AppCompatActivity implements AutoPermissionsList
         super.onWindowFocusChanged(hasFocus);
 
         // get variation for crop bitmap
-        int[] guide_location = new int[2];
         guide_width = imageview.getWidth();
         guide_height = imageview.getHeight();
         guide_top = imageview.getTop();
         guide_left = imageview.getLeft();
-//        imageview.getLocationOnScreen(guide_location);
-//        guide_left = guide_location[0];
-//        guide_top = guide_location[1];
 
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -174,15 +174,15 @@ public class CameraTake extends AppCompatActivity implements AutoPermissionsList
         cameraView.capture(new Camera.PictureCallback(){
             public void onPictureTaken(byte[] data, Camera camera){
                 try {
-//                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-//                    Matrix matrix = new Matrix();
-//                    matrix.postRotate(90);
-//                    Bitmap r_bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-//
-//
-//                    // crop the image
-//                    Bitmap cropped_bitmap = Bitmap.createBitmap(r_bitmap, guide_left, guide_top, guide_width, guide_height);
-//                    // save the cropped image
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(90);
+                    Bitmap r_bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                    Bitmap rs_bitmap = resizeBitmap(r_bitmap, cameraView.getWidth(), cameraView.getHeight());
+
+                    // crop the image
+                    Bitmap cropped_bitmap = Bitmap.createBitmap(rs_bitmap, guide_left, guide_top, guide_width, guide_height);
+                    // save the cropped image
 //                    String outUriStr = MediaStore.Images.Media.insertImage(
 //                            getContentResolver(),
 //                            cropped_bitmap,
@@ -196,12 +196,11 @@ public class CameraTake extends AppCompatActivity implements AutoPermissionsList
 //                        Uri outUri = Uri.parse(outUriStr);
 //                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, outUri));
 //                    }
-                    // converse bitmap to byte[]
-//                    int size = guide_width * guide_height;
-//                    ByteBuffer byteBuffer = ByteBuffer.allocate(size);
-//                    cropped_bitmap.copyPixelsToBuffer(byteBuffer);
-//                    byte[] croped_data = byteBuffer.array();
-                    image_byte = Arrays.copyOf(data, data.length);
+
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream() ;
+                    cropped_bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream) ;
+                    image_byte = stream.toByteArray() ;
+//                    image_byte = Arrays.copyOf(data, data.length);
                     camera.startPreview();
 
                 } catch (Exception e) {
@@ -209,6 +208,20 @@ public class CameraTake extends AppCompatActivity implements AutoPermissionsList
                 }
             }
         });
+    }
+
+    public Bitmap resizeBitmap(Bitmap bitmap, int width, int height) {
+        if (bitmap.getWidth() != width || bitmap.getHeight() != height){
+            float w_ratio = 1.0f * (float)width / (float)bitmap.getWidth();
+            float h_ratio = 1.0f * (float)height / (float)bitmap.getHeight();
+
+            bitmap = Bitmap.createScaledBitmap(bitmap,
+                    (int)(((float)bitmap.getWidth()) * w_ratio), // Width
+                    (int)(((float)bitmap.getHeight()) * h_ratio), // Height
+                    false);
+        }
+
+        return bitmap;
     }
 
     class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
