@@ -43,11 +43,8 @@ import java.util.List;
 
 public class CameraTake extends AppCompatActivity implements AutoPermissionsListener {
     public static final int REQUEST_CODE_MENU = 101;
-    String server_ip = "";
     CameraSurfaceView cameraView;
     ImageView imageview;
-    TextView textView;
-    Handler handler = new Handler();
     byte[] image_byte = null;
     int guide_width, guide_height, guide_left, guide_top;
 
@@ -62,7 +59,6 @@ public class CameraTake extends AppCompatActivity implements AutoPermissionsList
         FrameLayout previewFrame = findViewById(R.id.previewFrame);
         cameraView = new CameraSurfaceView(this);
         previewFrame.addView(cameraView);
-        textView = findViewById(R.id.textView);
         imageview = findViewById(R.id.guide_line_view);
 
         Button button = findViewById(R.id.pill_detect_submit);
@@ -79,53 +75,16 @@ public class CameraTake extends AppCompatActivity implements AutoPermissionsList
                             e.printStackTrace();
 
                         }
-                        send(image_byte);
+                        Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
+                        intent.putExtra("image_byte", image_byte);
+                        startActivityForResult(intent, REQUEST_CODE_MENU);
                     }
                 }).start();
-
-//                Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
-//                intent.putExtra("image_byte", image_byte);
-//                startActivityForResult(intent, REQUEST_CODE_MENU);
             }
         });
         AutoPermissions.Companion.loadAllPermissions(this, 101);
     }
 
-
-    public void printClientLog(final String data){
-        Log.d("ResultActivity", data);
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                textView.append(data + "\n");
-            }
-        });
-    }
-
-    public void send(byte[] data){
-        try {
-            int portNumber = 5003;
-            Socket sock = new Socket(server_ip, portNumber);
-            printClientLog("소켓 연결함.");
-
-            DataOutputStream outstream = new DataOutputStream(sock.getOutputStream());
-            outstream.write(data);
-            outstream.flush();
-            printClientLog("데이터 전송함.");
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-            String rev = reader.readLine();
-            printClientLog("서버로부터 받음: " + rev);
-            sock.close();
-        } catch(ConnectException e){
-            Looper.prepare();
-            Toast.makeText(this, "Please Check sever Ip or State", Toast.LENGTH_LONG).show();
-            Looper.loop();
-        } catch(Exception ex){
-            ex.printStackTrace();
-        }
-    }
     // onCreate에서 아래 문장 실행시, window가 activity에 붙기전에 계산하므로 0이 된다.
     // onWindowFocusChanged는 onCreate 이후에 실행되어 정상값으로 나옴
     @Override
