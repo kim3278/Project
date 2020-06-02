@@ -20,8 +20,6 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
         switch(position){
             case 0:
                 return new TabFragment1();
-            case 1:
-                return new TabFragment2();
             default:
                 return null;
         }

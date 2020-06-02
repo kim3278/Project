@@ -19,10 +19,16 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
+import java.net.HttpURLConnection;
 import java.net.Socket;
+import java.net.URL;
+import java.nio.Buffer;
 
 public class ResultActivity extends AppCompatActivity {
     String server_ip = "";
+    String token = "3932f3b0-cfab-11dc-95ff-0800200c9a663932f3b0-cfab-11dc-95ff-0800200c9a66"; // api token for hipaaspace.com
+    String rev = "69945-068-20"; // 소켓통신을 통해 서버로부터 받은 약품코드이름
+    StringBuilder result_json = null; // API를 통해 얻은 JSON 파일
     TextView textView;
     ImageView imageView;
     byte[] image_byte = null;
@@ -74,6 +80,26 @@ public class ResultActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        Button get_json_button = findViewById(R.id.get_json);
+        get_json_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(rev != null){
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String req = "https://www.hipaaspace.com/api/ndc/getcode?q="+ rev + "&rt=json&token="+ token;
+                            request(req);
+                        }
+                    }).start();
+                } else {
+                    Log.d("api", "No rev");
+                    Toast.makeText(getApplicationContext(), "서버로부터 받은 약품코드가 없습니다.", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
     }
 
     @Override
@@ -105,7 +131,7 @@ public class ResultActivity extends AppCompatActivity {
             printClientLog("데이터 전송함.");
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-            String rev = reader.readLine();
+            rev = reader.readLine();
             printClientLog("서버로부터 받음: " + rev);
             sock.close();
         } catch(ConnectException e){
@@ -115,5 +141,36 @@ public class ResultActivity extends AppCompatActivity {
         } catch(Exception ex){
             ex.printStackTrace();
         }
+    }
+
+    public void request(String urlStr){
+        StringBuilder output = new StringBuilder();
+        try{
+            URL url = new URL(urlStr);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            if (conn != null){
+                conn.setConnectTimeout(10000);
+                conn.setRequestMethod("GET");
+                conn.setDoInput(true);
+
+                int resCode = conn.getResponseCode();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line = null;
+                while (true){
+                    line = reader.readLine();
+                    if(line == null){
+                        break;
+                    }
+                    output.append(line + "\n");
+                }
+                reader.close();
+                conn.disconnect();
+            }
+        } catch(Exception ex){
+            System.out.println("Err at request Method in resultActivity.java: " + ex.toString());
+        }
+        printClientLog(output.toString());
+        result_json = output;
     }
 }
