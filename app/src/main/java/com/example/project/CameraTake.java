@@ -43,6 +43,7 @@ import java.util.List;
 
 public class CameraTake extends AppCompatActivity implements AutoPermissionsListener {
     public static final int REQUEST_CODE_MENU = 101;
+    public static final int GET_GALLERY_IMAGE = 201;
     CameraSurfaceView cameraView;
     ImageView imageview;
     byte[] image_byte = null;
@@ -82,6 +83,17 @@ public class CameraTake extends AppCompatActivity implements AutoPermissionsList
                 }).start();
             }
         });
+
+        Button button_gallery = findViewById(R.id.access_to_gallery);
+        button_gallery.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent. setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                startActivityForResult(intent, GET_GALLERY_IMAGE);
+            }
+        });
+
         AutoPermissions.Companion.loadAllPermissions(this, 101);
     }
 
@@ -109,6 +121,11 @@ public class CameraTake extends AppCompatActivity implements AutoPermissionsList
             } else if(resultCode == 200){ // 닫기
                 finish();
             }
+        } else if(requestCode == GET_GALLERY_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null){
+            Uri selectedImageUri = data.getData();
+            Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
+            intent.putExtra("selectedImageUri", selectedImageUri);
+            startActivityForResult(intent, REQUEST_CODE_MENU);
         }
     }
 

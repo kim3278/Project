@@ -2,9 +2,11 @@ package com.example.project;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -16,7 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
@@ -38,13 +43,17 @@ public class ResultActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
+        imageView = findViewById(R.id.cropImageView);
         Intent intent = getIntent();
         if(intent.hasExtra("image_byte")){
             image_byte = intent.getByteArrayExtra("image_byte");
 
             Bitmap bmp = BitmapFactory.decodeByteArray(image_byte, 0, image_byte.length);
-            imageView = findViewById(R.id.cropImageView);
             imageView.setImageBitmap(bmp);
+        } else if(intent.hasExtra("selectedImageUri")){
+            Uri img_uri = intent.getParcelableExtra("selectedImageUri");
+            imageView.setImageURI(img_uri);
+            image_byte = convertImageToByte(img_uri);
         }
 
         textView = findViewById(R.id.textView);
@@ -100,6 +109,21 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public byte[] convertImageToByte(Uri uri){
+        byte[] data = null;
+        try {
+            ContentResolver cr = getBaseContext().getContentResolver();
+            InputStream inputStream = cr.openInputStream(uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            data = baos.toByteArray();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return data;
     }
 
     @Override

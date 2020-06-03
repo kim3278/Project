@@ -57,7 +57,18 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="#00ff0000"
             android:text="찍기"
+            android:textSize="20sp"
             tools:ignore="ButtonStyle" />
+
+        <Button
+            android:id="@+id/access_to_gallery"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00ff0000"
+            android:textSize="20sp"
+            android:text="갤러리에서 불러오기" />
     </LinearLayout>
 </LinearLayout>
