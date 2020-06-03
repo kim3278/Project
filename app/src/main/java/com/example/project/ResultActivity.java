@@ -2,6 +2,7 @@ package com.example.project;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,6 +17,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -60,11 +66,11 @@ public class ResultActivity extends AppCompatActivity {
         Button send_button = findViewById(R.id.send);
         send_button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        send(image_byte);
+                        send(image_byte, view);
                     }
                 }).start();
             }
@@ -92,6 +98,7 @@ public class ResultActivity extends AppCompatActivity {
 
         Button get_json_button = findViewById(R.id.get_json);
         get_json_button.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("WrongConstant")
             @Override
             public void onClick(View v) {
                 if(rev != null){
@@ -104,7 +111,7 @@ public class ResultActivity extends AppCompatActivity {
                     }).start();
                 } else {
                     Log.d("api", "No rev");
-                    Toast.makeText(getApplicationContext(), "서버로부터 받은 약품코드가 없습니다.", Toast.LENGTH_LONG).show();
+                    Snackbar.make(v, "서버로부터 받은 약품코드가 없습니다.", Snackbar.LENGTH_LONG).show();
                 }
             }
         });
@@ -143,7 +150,8 @@ public class ResultActivity extends AppCompatActivity {
         });
     }
 
-    public void send(byte[] data){
+    @SuppressLint("WrongConstant")
+    public void send(byte[] data, View view){
         try {
             int portNumber = 5003;
             Socket sock = new Socket(server_ip, portNumber);
@@ -160,7 +168,7 @@ public class ResultActivity extends AppCompatActivity {
             sock.close();
         } catch(ConnectException e){
             Looper.prepare();
-            Toast.makeText(this, "Please Check sever Ip or State", Toast.LENGTH_LONG).show();
+            Snackbar.make(view, "Please check sever ip or server state", Snackbar.LENGTH_LONG).show();
             Looper.loop();
         } catch(Exception ex){
             ex.printStackTrace();
@@ -188,13 +196,25 @@ public class ResultActivity extends AppCompatActivity {
                     }
                     output.append(line + "\n");
                 }
+                JSONObject jsonObj = new JSONObject(output.toString());
+                if(!jsonObj.isNull("error")){
+                    printClientLog("약품 코드가 잘못되었습니다.");
+                    output = null;
+                } else {
+                    JSONArray jsonArray = jsonObj.getJSONArray("NDC");
+                    if(jsonArray.getJSONObject(0).isNull("NDCCode")){
+                        printClientLog("API에 없는 약품코드입니다.");
+                        output = null;
+                    }else{
+                        printClientLog(output.toString());
+                        result_json = output;
+                    }
+                }
                 reader.close();
                 conn.disconnect();
             }
         } catch(Exception ex){
             System.out.println("Err at request Method in resultActivity.java: " + ex.toString());
         }
-        printClientLog(output.toString());
-        result_json = output;
     }
 }
