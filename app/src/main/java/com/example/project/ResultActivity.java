@@ -38,9 +38,10 @@ import java.nio.Buffer;
 public class ResultActivity extends AppCompatActivity {
     String server_ip = "";
     String token = "3932f3b0-cfab-11dc-95ff-0800200c9a663932f3b0-cfab-11dc-95ff-0800200c9a66"; // api token for hipaaspace.com
-    String rev = "69945-068-20"; // 소켓통신을 통해 서버로부터 받은 약품코드이름
+    String rev = "10144-0602-15"; // 소켓통신을 통해 서버로부터 받은 약품코드이름
     StringBuilder result_json = null; // API를 통해 얻은 JSON 파일
     TextView textView;
+    TextView json_result_view; // JSON에서 필요한 데이터만 보여줄 view
     ImageView imageView;
     byte[] image_byte = null;
     Handler handler = new Handler();
@@ -61,6 +62,8 @@ public class ResultActivity extends AppCompatActivity {
             imageView.setImageURI(img_uri);
             image_byte = convertImageToByte(img_uri);
         }
+
+        json_result_view = findViewById(R.id.json_result_view);
 
         textView = findViewById(R.id.textView);
         Button send_button = findViewById(R.id.send);
@@ -105,7 +108,7 @@ public class ResultActivity extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            String req = "https://www.hipaaspace.com/api/ndc/getcode?q="+ rev + "&rt=json&token="+ token;
+                            String req = "https://www.hipaaspace.com/api/ndc/search?q="+ rev + "&rt=json&token="+ token;
                             request(req);
                         }
                     }).start();
@@ -206,7 +209,19 @@ public class ResultActivity extends AppCompatActivity {
                         printClientLog("API에 없는 약품코드입니다.");
                         output = null;
                     }else{
-                        printClientLog(output.toString());
+//                        printClientLog(output.toString());
+                        JSONObject jsd = jsonArray.getJSONObject(0);
+//                        printClientLog(jsd.toString());
+                        final String jsb = "약품코드 : " + jsd.getString("NDCCode") + "\n" +
+                                "성분 : " + jsd.getString("SubstanceName") + "\n" +
+                                "제형 : " + jsd.getString("DosageFormName") + "\n" +
+                                "제조 회사 : " + jsd.getString("LabelerName") + "\n";
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                json_result_view.setText(jsb);
+                            }
+                        });
                         result_json = output;
                     }
                 }

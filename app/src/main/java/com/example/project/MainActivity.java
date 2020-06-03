@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 
 import androidx.appcompat.widget.Toolbar;
@@ -29,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         tabLayout = (TabLayout)findViewById(R.id.tabLayout);
         tabLayout.addTab(tabLayout.newTab().setText("Main"));
