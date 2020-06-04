@@ -7,39 +7,21 @@
     tools:context=".ResultActivity"
     android:orientation="vertical">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="20sp" />
-
-        </LinearLayout>
-    </ScrollView>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/cropImageView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginBottom="10dp"/>
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
@@ -50,6 +32,11 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:text="약 더 자세히 알아보기"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="5dp"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/custom_button"
                 android:textSize="20sp" />
 
             <Button
@@ -57,14 +44,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:text="캘린더 추가하기"
+                android:background="@drawable/custom_button2"
+                android:layout_marginRight="5dp"
+                android:text="캘린더 추가"
+                android:textColor="#FFFFFF"
                 android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/json_result_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="12sp" />
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft ="30dp"
+                android:layout_marginRight="30dp"
+                android:textSize="20sp" />
 
         </LinearLayout>
 
@@ -81,21 +74,28 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="전송"
-            tools:ignore="ButtonStyle" />
+            android:drawableTop = "@drawable/send"
+            tools:ignore="ButtonStyle"
+            android:background="#FFFFFF"/>
+
         <Button
             android:id="@+id/retake"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="다시 찍기"
-            tools:ignore="ButtonStyle" />
+            android:drawableTop = "@drawable/camera"
+            tools:ignore="ButtonStyle"
+            android:background="#FFFFFF"/>
         <Button
             android:id="@+id/close"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="닫기"
-            tools:ignore="ButtonStyle" />
+            android:drawableTop = "@drawable/close"
+            tools:ignore="ButtonStyle"
+            android:background="#FFFFFF"/>
 
     </LinearLayout>
 

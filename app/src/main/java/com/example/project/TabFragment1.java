@@ -26,10 +26,10 @@ public class TabFragment1 extends Fragment {
 
         itemArrayList = new ArrayList<>();
 
-        itemArrayList.add(new Item("약1", "email1", "m1"));
-        itemArrayList.add(new Item("약2", "email2", "m2"));
-        itemArrayList.add(new Item("약3", "email1", "m3"));
-        itemArrayList.add(new Item("약4", "email1", "m4"));
+        itemArrayList.add(new Item("약품코드 25139-682-13", "매일 20:00", "혈압약"));
+        itemArrayList.add(new Item("약품코드 48329-328-34", "매일 7:00", "비타민C"));
+        itemArrayList.add(new Item("약품코드 35082-093-29", "매일 8:00", "비타민D"));
+        itemArrayList.add(new Item("약품코드 10144-602-15", "매일 12:00", "근육이완제"));
     }
 
     @Nullable

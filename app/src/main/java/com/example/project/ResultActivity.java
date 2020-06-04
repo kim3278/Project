@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -34,6 +36,8 @@ import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.Buffer;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class ResultActivity extends AppCompatActivity {
     String server_ip = "";
@@ -45,13 +49,15 @@ public class ResultActivity extends AppCompatActivity {
     ImageView imageView;
     byte[] image_byte = null;
     Handler handler = new Handler();
+    String code;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
         imageView = findViewById(R.id.cropImageView);
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         if(intent.hasExtra("image_byte")){
             image_byte = intent.getByteArrayExtra("image_byte");
 
@@ -65,7 +71,7 @@ public class ResultActivity extends AppCompatActivity {
 
         json_result_view = findViewById(R.id.json_result_view);
 
-        textView = findViewById(R.id.textView);
+
         Button send_button = findViewById(R.id.send);
         send_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,7 +85,7 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
 
-        Button retake_button = findViewById(R.id.retake);
+        final Button retake_button = findViewById(R.id.retake);
         retake_button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -119,6 +125,24 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
 
+        Button calender_button = findViewById(R.id.calendar_button);
+        calender_button.setOnClickListener(new View.OnClickListener() { // 캘린더
+
+
+            @Override
+            public void onClick(View v) {
+
+                if(code != null){
+                    Intent intent2 = new Intent(Intent.ACTION_INSERT, CalendarContract.Events.CONTENT_URI);
+
+                    intent2.putExtra(CalendarContract.Events.TITLE, "약품코드 : "+ code);
+                    startActivity(intent2);
+                }
+                else{
+                    Snackbar.make(v, "서버로부터 받은 약품코드가 없습니다.", Snackbar.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     public byte[] convertImageToByte(Uri uri){
@@ -158,16 +182,16 @@ public class ResultActivity extends AppCompatActivity {
         try {
             int portNumber = 5003;
             Socket sock = new Socket(server_ip, portNumber);
-            printClientLog("소켓 연결함.");
+            Snackbar.make(view, "소켓 연결함.", Snackbar.LENGTH_LONG).show();
 
             DataOutputStream outstream = new DataOutputStream(sock.getOutputStream());
             outstream.write(data);
             outstream.flush();
-            printClientLog("데이터 전송함.");
+            Snackbar.make(view, "데이터 전송함.", Snackbar.LENGTH_LONG).show();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             rev = reader.readLine();
-            printClientLog("서버로부터 받음: " + rev);
+            Snackbar.make(view, "서버로부터 받음: " + rev, Snackbar.LENGTH_LONG).show();
             sock.close();
         } catch(ConnectException e){
             Looper.prepare();
@@ -223,6 +247,7 @@ public class ResultActivity extends AppCompatActivity {
                             }
                         });
                         result_json = output;
+                        code=jsd.getString("NDCCode");
                     }
                 }
                 reader.close();

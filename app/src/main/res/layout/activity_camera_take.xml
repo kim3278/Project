@@ -59,7 +59,7 @@
             android:layout_weight="1"
             android:background="#00ff0000"
             android:text="찍기"
-            android:textSize="20sp"
+            android:drawableTop = "@drawable/camera"
             tools:ignore="ButtonStyle" />
 
         <Button
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#00ff0000"
-            android:textSize="20sp"
-            android:text="갤러리에서 불러오기" />
+            android:text="갤러리에서 불러오기"
+            android:drawableTop = "@drawable/gallery"/>
     </LinearLayout>
 </LinearLayout>
