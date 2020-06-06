@@ -72,7 +72,7 @@ public class CameraTake extends AppCompatActivity {
                     public void run() {
                         do {
                             try {
-                                Thread.sleep(200);
+                                Thread.sleep(1000);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -117,6 +117,7 @@ public class CameraTake extends AppCompatActivity {
         if(requestCode == REQUEST_CODE_MENU){
             if(resultCode == 100){ // 다시찍기
                 Toast.makeText(getApplicationContext(), "다시 찍어주세요.", Toast.LENGTH_LONG).show();
+                image_byte = null;
             } else if(resultCode == 200){ // 닫기
                 finish();
             }
