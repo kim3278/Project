@@ -41,7 +41,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 
-public class CameraTake extends AppCompatActivity implements AutoPermissionsListener {
+public class CameraTake extends AppCompatActivity {
     public static final int REQUEST_CODE_MENU = 101;
     public static final int GET_GALLERY_IMAGE = 201;
     CameraSurfaceView cameraView;
@@ -70,12 +70,13 @@ public class CameraTake extends AppCompatActivity implements AutoPermissionsList
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        try{
-                            Thread.sleep(1000);
-                        }catch(InterruptedException e){
-                            e.printStackTrace();
-
-                        }
+                        do {
+                            try {
+                                Thread.sleep(200);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        } while (image_byte == null);
                         Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
                         intent.putExtra("image_byte", image_byte);
                         startActivityForResult(intent, REQUEST_CODE_MENU);
@@ -93,8 +94,6 @@ public class CameraTake extends AppCompatActivity implements AutoPermissionsList
                 startActivityForResult(intent, GET_GALLERY_IMAGE);
             }
         });
-
-        AutoPermissions.Companion.loadAllPermissions(this, 101);
     }
 
     // onCreate에서 아래 문장 실행시, window가 activity에 붙기전에 계산하므로 0이 된다.
@@ -127,23 +126,6 @@ public class CameraTake extends AppCompatActivity implements AutoPermissionsList
             intent.putExtra("selectedImageUri", selectedImageUri);
             startActivityForResult(intent, REQUEST_CODE_MENU);
         }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        AutoPermissions.Companion.parsePermissions(this, requestCode, permissions, this);
-    }
-
-    @Override
-    public void onDenied(int requestCode, String[] permissions) {
-        Toast.makeText(this, "permissions denied : " + permissions.length,
-                Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onGranted(int requestCode, String[] permissions) {
-        Toast.makeText(this, "permissions granted : " + permissions.length, Toast.LENGTH_SHORT).show();
     }
 
     public void takePicture() {

@@ -1,5 +1,6 @@
 package com.example.project;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -7,12 +8,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
+import com.pedro.library.AutoPermissions;
+import com.pedro.library.AutoPermissionsListener;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AutoPermissionsListener {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -57,5 +61,24 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        AutoPermissions.Companion.loadAllPermissions(this, 101);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        AutoPermissions.Companion.parsePermissions(this, requestCode, permissions, this);
+    }
+
+    @Override
+    public void onDenied(int requestCode, String[] permissions) {
+        Toast.makeText(this, "permissions denied : " + permissions.length,
+                Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onGranted(int requestCode, String[] permissions) {
+        Toast.makeText(this, "permissions granted : " + permissions.length, Toast.LENGTH_SHORT).show();
     }
 }
