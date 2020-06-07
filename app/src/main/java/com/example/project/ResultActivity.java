@@ -42,9 +42,8 @@ import java.util.Iterator;
 public class ResultActivity extends AppCompatActivity {
     String server_ip = "";
     String token = "3932f3b0-cfab-11dc-95ff-0800200c9a663932f3b0-cfab-11dc-95ff-0800200c9a66"; // api token for hipaaspace.com
-    String rev = "10144-0602-15"; // 소켓통신을 통해 서버로부터 받은 약품코드이름
+    String rev = null; // 소켓통신을 통해 서버로부터 받은 약품코드이름
     StringBuilder result_json = null; // API를 통해 얻은 JSON 파일
-    TextView textView;
     TextView json_result_view; // JSON에서 필요한 데이터만 보여줄 view
     ImageView imageView;
     byte[] image_byte = null;
@@ -167,14 +166,9 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     public void printClientLog(final String data){
-        Log.d("ResultActivity", data);
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                textView.append(data + "\n");
-            }
-        });
+        Looper.prepare();
+        Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
+        Looper.loop();
     }
 
     @SuppressLint("WrongConstant")
@@ -190,8 +184,9 @@ public class ResultActivity extends AppCompatActivity {
             Snackbar.make(view, "데이터 전송함.", Snackbar.LENGTH_LONG).show();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-            rev = reader.readLine();
-            Snackbar.make(view, "서버로부터 받음: " + rev, Snackbar.LENGTH_LONG).show();
+            String t_rev = reader.readLine();
+            Snackbar.make(view, "서버로부터 받음: " + t_rev, Snackbar.LENGTH_LONG).show();
+            rev = t_rev.substring(9);
             sock.close();
         } catch(ConnectException e){
             Looper.prepare();
