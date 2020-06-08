@@ -3,7 +3,10 @@ package com.example.project;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,7 +42,10 @@ import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.xml.transform.Result;
+
 public class ResultActivity extends AppCompatActivity {
+    ProgressDialog dialog;
     String server_ip = "";
     String token = "3932f3b0-cfab-11dc-95ff-0800200c9a663932f3b0-cfab-11dc-95ff-0800200c9a66"; // api token for hipaaspace.com
     String rev = null; // 소켓통신을 통해 서버로부터 받은 약품코드이름
@@ -182,10 +188,27 @@ public class ResultActivity extends AppCompatActivity {
             outstream.write(data);
             outstream.flush();
             Snackbar.make(view, "데이터 전송함.", Snackbar.LENGTH_LONG).show();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    dialog = new ProgressDialog(ResultActivity.this);
+                    dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    dialog.setMessage("서버에서 알약을 식별하고 있습니다.");
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.show();
+                }
+            });
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-            String t_rev = reader.readLine();
-            Snackbar.make(view, "서버로부터 받음: " + t_rev, Snackbar.LENGTH_LONG).show();
+            final String t_rev = reader.readLine();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    dialog.dismiss();
+                    showMessage(t_rev.substring(9));
+                }
+            });
+//            Snackbar.make(view, "서버로부터 받음: " + t_rev, Snackbar.LENGTH_LONG).show();
             rev = t_rev.substring(9);
             sock.close();
         } catch(ConnectException e){
@@ -197,6 +220,22 @@ public class ResultActivity extends AppCompatActivity {
         }
     }
 
+    public void showMessage(String res){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Result");
+        builder.setMessage("알약은 : "+res+" 입니다.");
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
+
+        builder.setNeutralButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
     public void request(String urlStr){
         StringBuilder output = new StringBuilder();
         try{
