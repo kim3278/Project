@@ -67,21 +67,6 @@ public class CameraTake extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 takePicture();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        do {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        } while (image_byte == null);
-                        Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
-                        intent.putExtra("image_byte", image_byte);
-                        startActivityForResult(intent, REQUEST_CODE_MENU);
-                    }
-                }).start();
             }
         });
 
@@ -161,7 +146,7 @@ public class CameraTake extends AppCompatActivity {
                     image_byte = stream.toByteArray() ;
 //                    image_byte = Arrays.copyOf(data, data.length);
                     camera.startPreview();
-
+                    callResultActivity();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -169,6 +154,13 @@ public class CameraTake extends AppCompatActivity {
         });
     }
 
+    public void callResultActivity() {
+        if (image_byte != null) {
+            Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
+            intent.putExtra("image_byte", image_byte);
+            startActivityForResult(intent, REQUEST_CODE_MENU);
+        }
+    }
     public Bitmap resizeBitmap(Bitmap bitmap, int width, int height) {
         if (bitmap.getWidth() != width || bitmap.getHeight() != height){
             float w_ratio = 1.0f * (float)width / (float)bitmap.getWidth();
